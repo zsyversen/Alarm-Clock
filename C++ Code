@@ -1,0 +1,84 @@
+#include <Wire.h>
+#include <RTClib.h>
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2); //Creates LCD object
+RTC_DS1307 rtc; //Creates rtc object
+int buzzerPin = 8; //Creates buzzer object
+
+
+void setup() {
+Serial.begin(9600);
+//RTC setup
+rtc.begin(); //starts the rtc
+rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // Uses the base time from computer to startup
+
+pinMode(buzzerPin,OUTPUT); // Allows for the pin to push voltage
+
+//LCD setup
+lcd.begin(16,2); //Turns on LCD 
+
+}
+
+void loop() {
+DateTime now = rtc.now(); // Sets time and date to now
+
+if(now.hour() == 7 && now.minute() == 30) {
+
+lcd.print("WAKE UP");
+digitalWrite(buzzerPin,HIGH); // Turns on Buzzer
+
+delay(30000);
+
+digitalWrite(buzzerPin,LOW);
+}
+
+// Using an if loop to determine the day and print the day of week
+if(now.dayOfTheWeek() == 1) {
+  lcd.print("Monday");
+} else if (now.dayOfTheWeek() == 2) {
+  lcd.print("Tuesday");
+
+} else if (now.dayOfTheWeek() == 3) {
+  lcd.print("Wednesday");
+
+} else if (now.dayOfTheWeek() == 4) {
+  lcd.print("Thursday");
+
+} else if (now.dayOfTheWeek() == 5) {
+  lcd.print("Friday");
+
+} else if (now.dayOfTheWeek() == 6) {
+  lcd.print("Saturday");
+
+} else {
+  lcd.print("Sunday");
+}
+
+// Prints the Time on the LCD
+lcd.setCursor(10,0);
+lcd.print(now.hour());
+lcd.print(":"); 
+
+if(now.minute() < 10) {
+lcd.print("0");
+lcd.print(now.minute());
+
+} else {
+  lcd.print(now.minute());
+}
+
+
+// Prints the Date on the LCD
+lcd.setCursor(0,1);
+lcd.print("Date:");
+lcd.print(now.month());
+lcd.print("/");
+lcd.print(now.day());
+lcd.print("/");
+lcd.print(now.year());
+delay(5000);
+lcd.clear();
+
+
+}
